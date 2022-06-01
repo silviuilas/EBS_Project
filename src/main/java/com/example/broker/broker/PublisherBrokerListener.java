@@ -1,25 +1,23 @@
-package com.example.broker.brokers;
+package com.example.broker.broker;
 
-import com.example.broker.SubscriptionManager;
 import com.example.broker.pubsub.Publishing;
-import com.example.broker.pubsub.Subscriber;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DeliverCallback;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
-import static com.example.broker.Constants.*;
-import static com.example.broker.Constants.PUBLISHING_EXCHANGE_NAME;
+import static com.example.broker.helper.Constants.PUBLISHING_EXCHANGE_NAME;
 
-public class PublisherBroker {
+public class PublisherBrokerListener {
+    private final Gson gson = new Gson();
     Connection connection;
     SubscriptionManager subscriptionManager;
-    private final Gson gson = new Gson();
 
 
-    public PublisherBroker(Connection connection, SubscriptionManager subscriptionManager) {
+    public PublisherBrokerListener(Connection connection, SubscriptionManager subscriptionManager) {
         this.connection = connection;
         this.subscriptionManager = subscriptionManager;
     }
@@ -35,18 +33,19 @@ public class PublisherBroker {
         String queueName = channel.queueDeclare().getQueue();
         channel.queueBind(queueName, PUBLISHING_EXCHANGE_NAME, "");
 
-        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+        System.out.println(" [B] Waiting for messages from publisher. To exit press CTRL+C");
 
         DeliverCallback deliverCallback = getPublisherDeliverCallback();
-        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
+        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {
+        });
     }
 
     private DeliverCallback getPublisherDeliverCallback() {
         return (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), "UTF-8");
+            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             Publishing publishing = gson.fromJson(message, Publishing.class);
 
-            System.out.println(" [x] Publisher Broker Received '" + publishing + "'");
+            System.out.println(" [B] Broker Received '" + publishing + "'");
 
             subscriptionManager.notifySubscribers(publishing);
         };

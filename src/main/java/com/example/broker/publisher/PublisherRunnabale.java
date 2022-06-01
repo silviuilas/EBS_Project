@@ -1,6 +1,5 @@
-package com.example.broker.runners;
+package com.example.broker.publisher;
 
-import com.example.broker.Constants;
 import com.example.broker.pubsub.AtomicPublication;
 import com.example.broker.pubsub.Publishing;
 import com.google.gson.Gson;
@@ -9,12 +8,19 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
-import static com.example.broker.Constants.PUBLISHING_EXCHANGE_NAME;
+import static com.example.broker.helper.Constants.PUBLISHING_EXCHANGE_NAME;
 
 public class PublisherRunnabale implements Runnable {
     Gson gson = new Gson();
+
+    public static void main(String[] args) {
+        Thread receiveLogsThread = new Thread(new PublisherRunnabale());
+        receiveLogsThread.start();
+    }
+
 
     @Override
     public void run() {
@@ -27,8 +33,8 @@ public class PublisherRunnabale implements Runnable {
             publishing.getAtomicPublications().add(new AtomicPublication("company", "google"));
             String message = gson.toJson(publishing);
 
-            channel.basicPublish(PUBLISHING_EXCHANGE_NAME, "", null, message.getBytes("UTF-8"));
-            System.out.println(" [x] Publisher Sent '" + message + "'");
+            channel.basicPublish(PUBLISHING_EXCHANGE_NAME, "", null, message.getBytes(StandardCharsets.UTF_8));
+            System.out.println(" [P] Publisher Sent '" + message + "'");
         } catch (IOException | TimeoutException e) {
             e.printStackTrace();
         }

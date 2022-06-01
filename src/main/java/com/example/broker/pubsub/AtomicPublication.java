@@ -11,6 +11,22 @@ public class AtomicPublication implements Serializable {
         this.val = val;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Object getVal() {
+        return val;
+    }
+
+    public void setVal(Object val) {
+        this.val = val;
+    }
+
     @Override
     public String toString() {
         return "('" + name + '\'' +

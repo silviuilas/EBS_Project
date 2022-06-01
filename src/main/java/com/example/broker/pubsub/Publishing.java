@@ -1,7 +1,5 @@
 package com.example.broker.pubsub;
 
-import com.example.broker.pubsub.AtomicPublication;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +7,18 @@ import java.util.List;
 public class Publishing implements Serializable {
     List<AtomicPublication> atomicPublications = new ArrayList<>();
 
-    public void setAtomicPublications(List<AtomicPublication> atomicPublications) {
-        this.atomicPublications = atomicPublications;
+    @Override
+    public String toString() {
+        return "Publishing{" +
+                "atomicPublications=" + atomicPublications +
+                '}';
     }
 
     public List<AtomicPublication> getAtomicPublications() {
         return atomicPublications;
+    }
+
+    public void setAtomicPublications(List<AtomicPublication> atomicPublications) {
+        this.atomicPublications = atomicPublications;
     }
 }
