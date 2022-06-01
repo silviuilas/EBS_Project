@@ -17,12 +17,34 @@ public class SubscriptionToPredicateTransformer {
                 for (AtomicPublication atomicPublication :
                         publishing.getAtomicPublications()) {
                     if (Objects.equals(atomicSubscription.getName(), atomicPublication.getName())) {
-                        // TODO take in to account the operator and value
-                        return true;
+                        if(atomicPublication.getVal() instanceof String && atomicSubscription.getVal() instanceof String)
+                            return compareString((String) atomicSubscription.getVal(), atomicSubscription.getOp(), (String) atomicPublication.getVal());
+                        else if(atomicPublication.getVal() instanceof Double && atomicSubscription.getVal() instanceof Double)
+                            return compareIntegers((Double) atomicPublication.getVal(), atomicSubscription.getOp(), (Double) atomicSubscription.getVal());
+                        else
+                            throw new RuntimeException("Unsupported comparison");
                     }
                 }
             }
             return false;
+        };
+    }
+
+    private static boolean compareString(String compare, String op, String compareTo) {
+        return switch (op) {
+            case "=" -> Objects.equals(compare, compareTo);
+            default -> throw new RuntimeException("Undefined operator for comparison between String and String");
+        };
+    }
+
+    private static boolean compareIntegers(Double compare, String op, Double compareTo) {
+        return switch (op) {
+            case "=" -> Objects.equals(compare, compareTo);
+            case ">" -> compare > compareTo;
+            case ">=" -> compare >= compareTo;
+            case "<" -> compare < compareTo;
+            case "<=" -> compare <= compareTo;
+            default -> throw new RuntimeException("Undefined operator for comparison between Integer and Integer");
         };
     }
 }

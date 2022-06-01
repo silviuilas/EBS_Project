@@ -30,7 +30,7 @@ public class PublisherRunnabale implements Runnable {
              Channel channel = connection.createChannel()) {
             channel.exchangeDeclare(PUBLISHING_EXCHANGE_NAME, "fanout");
             Publishing publishing = new Publishing();
-            publishing.getAtomicPublications().add(new AtomicPublication("company", "google"));
+            publishing.getAtomicPublications().add(new AtomicPublication("price", 4));
             String message = gson.toJson(publishing);
 
             channel.basicPublish(PUBLISHING_EXCHANGE_NAME, "", null, message.getBytes(StandardCharsets.UTF_8));

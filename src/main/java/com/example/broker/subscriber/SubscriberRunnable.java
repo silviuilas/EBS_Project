@@ -42,7 +42,7 @@ public class SubscriberRunnable implements Runnable {
 
     private Subscription createSubscriberWithRouteKey(String routeKey) {
         Subscription subscription = new Subscription(routeKey);
-        subscription.getAtomicSubscriptions().add(new AtomicSubscription("company", "=", "facebook"));
+        subscription.getAtomicSubscriptions().add(new AtomicSubscription("price", "<=", 4));
         return subscription;
     }
 }
