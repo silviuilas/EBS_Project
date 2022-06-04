@@ -1,0 +1,40 @@
+
+Pub = List<SubPub>
+
+SubPub {
+	name : String
+	val : Object
+}
+
+Sub = List<SubSub>
+SubSub {
+	name : String
+	op : String
+	val : Object
+}
+
+
+List<List<SubPub>> Generam
+List<List<SubSub>> Generam
+
+
+Field {
+	name : String
+	vals : List<Objects>
+	pond : double 0-1
+	op_pond : Map<String, double>
+}
+
+Config {
+	nr_sub  : Integer
+	nr_pub : Integer
+	fields : List<Field>
+
+	generate_pub() : List<Pub>
+	generate_sub() : List<Sub>
+
+	write_pub_to_file(List<Pub>)
+	write_pub_to_file(List<Sub>)
+}
+
+
