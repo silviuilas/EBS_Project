@@ -19,9 +19,7 @@ public class SubscriberSender {
         this.connection = connection;
     }
 
-    public Subscription subscribe(Subscription subscription, int nr) throws IOException {
-        Channel channel = connection.createChannel();
-        channel.exchangeDeclare(SUBSCRIBING_EXCHANGE_NAME, "direct");
+    public Subscription subscribe(Subscription subscription, int nr, Channel channel) throws IOException {
         String message = gson.toJson(subscription);
 
         channel.basicPublish(SUBSCRIBING_EXCHANGE_NAME, SUBSCRIBING_ROUTE_KEY, null, message.getBytes(StandardCharsets.UTF_8));

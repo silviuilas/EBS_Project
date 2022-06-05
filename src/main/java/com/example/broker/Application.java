@@ -35,15 +35,15 @@ public class Application {
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
-                System.out.println("In shutdown hook");
-                System.out.println("Nr of nrOfSubscriptionSent " + nrOfSubscriptionSent);
-                System.out.println("Nr of nrOfSubscriptionReceived " + nrOfSubscriptionReceived);
-                System.out.println("Nr of nrOfPublicationSent " + nrOfPublicationSent);
-                System.out.println("Nr of nrOfPublicationReceived " + (nrOfPublicationReceived.intValue() / NUMBER_OF_BROKERS));
-                System.out.println("Nr of nrOfMatchesDone " + nrOfMatchesDone);
+                System.out.println(" [Shutting Down] In shutdown hook");
+                System.out.println(" [Shutting Down] Nr of nrOfSubscriptionSent " + nrOfSubscriptionSent);
+                System.out.println(" [Shutting Down] Nr of nrOfSubscriptionReceived " + nrOfSubscriptionReceived);
+                System.out.println(" [Shutting Down] Nr of nrOfPublicationSent " + nrOfPublicationSent);
+                System.out.println(" [Shutting Down] Nr of nrOfPublicationReceived " + (nrOfPublicationReceived.intValue() / NUMBER_OF_BROKERS));
+                System.out.println(" [Shutting Down] Nr of nrOfMatchesDone " + nrOfMatchesDone);
                 long endTime = System.nanoTime();
                 long duration = (endTime - startTime);
-                System.out.println("Took " + duration / 1000000 / 1000 + " seconds");
+                System.out.println(" [Shutting Down] Took " + duration / 1000000 / 1000 + " seconds");
             }
         }, "Shutdown-thread"));
     }

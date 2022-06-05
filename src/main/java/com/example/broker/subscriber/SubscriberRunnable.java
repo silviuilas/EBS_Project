@@ -5,6 +5,7 @@ import com.example.broker.helper.RandomString;
 import com.example.broker.pubsub.AtomicSubscription;
 import com.example.broker.pubsub.Subscription;
 import com.homework.generator.SubscriptionGeneratorAdapter;
+import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeoutException;
+
+import static com.example.broker.helper.Constants.SUBSCRIBING_EXCHANGE_NAME;
 
 public class SubscriberRunnable implements Runnable {
 
@@ -34,6 +37,8 @@ public class SubscriberRunnable implements Runnable {
         factory.setHost("localhost");
         try {
             Connection connection = factory.newConnection();
+            Channel channel = connection.createChannel();
+            channel.exchangeDeclare(SUBSCRIBING_EXCHANGE_NAME, "direct");
 
             SubscriberListener subscriberListener = new SubscriberListener(connection);
             subscriberListener.listenTo(name);
@@ -42,7 +47,7 @@ public class SubscriberRunnable implements Runnable {
             int nr = 0;
             for (Subscription subscription : subscriptions) {
                 SubscriberSender subscriberSender = new SubscriberSender(connection);
-                subscriberSender.subscribe(subscription, nr);
+                subscriberSender.subscribe(subscription, nr, channel);
                 Thread.sleep(54);
                 CustomLogger.nrOfSubscriptionSent.addAndGet(1);
                 nr += 1;
