@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 public class BrokerRunnable implements Runnable {
-    SubscriptionManager subscriptionManager = new SubscriptionManager();
+    SubscriptionManager subscriptionManager;
 
     public static void main(String[] args) {
         Thread receiveLogsThread = new Thread(new BrokerRunnable());
@@ -23,6 +23,7 @@ public class BrokerRunnable implements Runnable {
         Connection connection;
         try {
             connection = factory.newConnection();
+            subscriptionManager = new SubscriptionManager(factory);
             SubscriberBrokerListener subscriberBrokerListener = new SubscriberBrokerListener(connection, subscriptionManager);
             subscriberBrokerListener.run();
             PublisherBrokerListener publisherBrokerListener = new PublisherBrokerListener(connection, subscriptionManager);

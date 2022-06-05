@@ -38,10 +38,12 @@ public class SubscriberRunnable implements Runnable {
             subscriberListener.listenTo(name);
 
             List<Subscription> subscriptions = generateSubscriptions(name, 3334);
+            int nr = 0;
             for (Subscription subscription : subscriptions) {
                 SubscriberSender subscriberSender = new SubscriberSender(connection);
-                subscriberSender.subscribe(subscription);
+                subscriberSender.subscribe(subscription, nr);
                 Thread.sleep(54);
+                nr += 1;
             }
         } catch (IOException | TimeoutException | InterruptedException e) {
             e.printStackTrace();

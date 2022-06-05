@@ -22,7 +22,7 @@ public class PublisherRunnabale implements Runnable {
 
 
     public static void main(String[] args) {
-        for(int i=0 ;i< 2;i++){
+        for (int i = 0; i < 2; i++) {
             Thread thread = new Thread(new PublisherRunnabale());
             thread.start();
         }
@@ -37,9 +37,11 @@ public class PublisherRunnabale implements Runnable {
              Channel channel = connection.createChannel()) {
             channel.exchangeDeclare(PUBLISHING_EXCHANGE_NAME, "fanout");
             List<Publication> publications = generatePublications(5000);
-            for(Publication publication : publications){
-                sendPublication(channel, publication);
+            int nr = 0;
+            for (Publication publication : publications) {
+                sendPublication(channel, publication, nr);
                 Thread.sleep(36);
+                nr += 1;
             }
 
         } catch (IOException | TimeoutException | InterruptedException e) {
@@ -47,16 +49,16 @@ public class PublisherRunnabale implements Runnable {
         }
     }
 
-    private void sendPublication(Channel channel, Publication publication) throws IOException {
+    private void sendPublication(Channel channel, Publication publication, int number) throws IOException {
         String message = gson.toJson(publication);
         channel.basicPublish(PUBLISHING_EXCHANGE_NAME, "", null, message.getBytes(StandardCharsets.UTF_8));
-        System.out.println(" [P] Publisher Sent '" + message + "'");
+        System.out.println(" [P] Publisher Sent '" + message + "'" + "number " + number);
     }
 
     private List<Publication> generatePublications(int numberOfPublicationsToGenerate) {
         List<Publication> publications = new ArrayList<>();
         List<List<AtomicPublication>> generatedPublications = publicationGenerator.getPublications(numberOfPublicationsToGenerate);
-        for(List<AtomicPublication> atomicPublications : generatedPublications){
+        for (List<AtomicPublication> atomicPublications : generatedPublications) {
             publications.add(createPublication(atomicPublications));
         }
         return publications;
@@ -64,7 +66,7 @@ public class PublisherRunnabale implements Runnable {
 
     private Publication createPublication(List<AtomicPublication> atomicPublications) {
         Publication publication = new Publication();
-        for(AtomicPublication atomicPublication : atomicPublications) {
+        for (AtomicPublication atomicPublication : atomicPublications) {
             publication.getAtomicPublications().add(atomicPublication);
         }
         return publication;

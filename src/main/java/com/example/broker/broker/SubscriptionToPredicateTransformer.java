@@ -30,6 +30,7 @@ public class SubscriptionToPredicateTransformer {
         };
     }
 
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
     private static boolean compareString(String compare, String op, String compareTo) {
         return switch (op) {
             case "=" -> Objects.equals(compare, compareTo);

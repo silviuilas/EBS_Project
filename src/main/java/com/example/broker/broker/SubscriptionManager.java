@@ -22,7 +22,14 @@ import static com.example.broker.helper.Constants.SUBSCRIBING_EXCHANGE_NAME;
 public class SubscriptionManager {
     List<Subscription> subscription = new ArrayList<>();
     Map<Subscription, Predicate<Publication>> subscriptionPredicateMap = new HashMap<>();
+    Map<String, Channel> subscriptionCachedChannels = new HashMap<>();
+    ConnectionFactory factory;
+    Connection connection;
     Gson gson = new Gson();
+
+    public SubscriptionManager(ConnectionFactory factory) {
+        this.factory = factory;
+    }
 
     public void addSubscription(Subscription subscription) {
         this.subscription.add(subscription);
@@ -30,24 +37,41 @@ public class SubscriptionManager {
     }
 
     public void notifySubscribers(Publication publication) {
+        int counter = 0;
         for (Subscription subscription : new ArrayList<>(this.subscription)) {
             if (subscriptionPredicateMap.get(subscription) != null && subscriptionPredicateMap.get(subscription).test(publication)) {
                 try {
                     notifySubscriber(subscription);
+                    counter += 1;
                 } catch (IOException | TimeoutException e) {
                     e.printStackTrace();
                 }
             }
         }
+        System.out.println(" [B] Notifying " + counter + " subscribers");
+    }
+
+    Channel getChannel(String routeKey) throws IOException, TimeoutException {
+        Channel cachedChannel = subscriptionCachedChannels.get(routeKey);
+        if (cachedChannel != null && cachedChannel.isOpen()) {
+            return cachedChannel;
+        }
+
+        if (connection == null) {
+            connection = factory.newConnection();
+            return getChannel(routeKey);
+        }
+        Channel channel = connection.createChannel();
+        if (channel == null) {
+            connection = factory.newConnection();
+            return getChannel(routeKey);
+        }
+        subscriptionCachedChannels.put(routeKey, channel);
+        return channel;
     }
 
     public void notifySubscriber(Subscription subscription) throws IOException, TimeoutException {
-        System.out.println(" [B] Broker Notifying " + subscription.getRouteKey());
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
+        Channel channel = getChannel(subscription.getRouteKey());
         channel.exchangeDeclare(SUBSCRIBING_EXCHANGE_NAME, "direct");
 
         channel.basicPublish(SUBSCRIBING_EXCHANGE_NAME, subscription.getRouteKey(), null, gson.toJson(subscription).getBytes(StandardCharsets.UTF_8));

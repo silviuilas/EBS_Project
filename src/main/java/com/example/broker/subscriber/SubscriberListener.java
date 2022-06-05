@@ -42,7 +42,7 @@ public class SubscriberListener {
         return (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             Subscription subscription = gson.fromJson(message, Subscription.class);
-            System.out.println(" [SL] Receiving notification on subscriber " + subscription.getRouteKey());
+//            System.out.println(" [SL] Receiving notification on subscriber " + subscription.getRouteKey());
         };
     }
 }
