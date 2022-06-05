@@ -15,47 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 public class SubscriptionGeneratorAdapter implements SubscriptionGenerator {
-    @Override
-    public List<List<AtomicSubscription>> getSubscriptions(int numberOfSubscriptions) {
-        Field company = getCompany();
-        Field value = getValue();
-        Field drop = getDrop();
-        Field variation = getVariation();
-        Field date = getDate();
-
-        Config config = new Config(numberOfSubscriptions*10, 0);
-
-        config.fields.add(company);
-        config.fields.add(value);
-        config.fields.add(drop);
-        config.fields.add(variation);
-        config.fields.add(date);
-
-        List<List<SubSub>> subs = config.generateSub();
-        List<List<AtomicSubscription>> subscriptions = new ArrayList<>();
-        for(List<SubSub> sub: subs){
-            if(sub.size() != 0) {
-                if(subscriptions.size() >= numberOfSubscriptions){
-                    break;
-                }
-                subscriptions.add(convertToAtomicSubscriptions(sub));
-            }
-        }
-        return subscriptions;
-    }
-
-    private List<AtomicSubscription> convertToAtomicSubscriptions(List<SubSub> sub){
-        List<AtomicSubscription> subscription = new ArrayList<>();
-        for(SubSub subSub : sub){
-            subscription.add(new AtomicSubscription(
-                    subSub.getName(),
-                    subSub.getOp(),
-                    subSub.getVal()
-            ));
-        }
-        return subscription;
-    }
-
     private static Field getValue() {
         Field value = new Field();
         value.setName("Value");
@@ -145,5 +104,45 @@ public class SubscriptionGeneratorAdapter implements SubscriptionGenerator {
         opPond.put("<", 0.25);
         datesField.setOpPond(opPond);
         return datesField;
+    }
+
+    @Override
+    public List<HashMap<String, AtomicSubscription>> getSubscriptions(int numberOfSubscriptions) {
+        Field company = getCompany();
+        Field value = getValue();
+        Field drop = getDrop();
+        Field variation = getVariation();
+        Field date = getDate();
+
+        Config config = new Config(numberOfSubscriptions * 10, 0);
+
+        config.fields.add(company);
+        config.fields.add(value);
+        config.fields.add(drop);
+        config.fields.add(variation);
+        config.fields.add(date);
+
+        List<List<SubSub>> subs = config.generateSub();
+        List<HashMap<String, AtomicSubscription>> subscriptions = new ArrayList<>();
+        for (List<SubSub> sub : subs) {
+            if (sub.size() != 0) {
+                if (subscriptions.size() >= numberOfSubscriptions) {
+                    break;
+                }
+                subscriptions.add(convertToAtomicSubscriptions(sub));
+            }
+        }
+        return subscriptions;
+    }
+
+    private HashMap<String, AtomicSubscription> convertToAtomicSubscriptions(List<SubSub> sub) {
+        HashMap<String, AtomicSubscription> subscription = new HashMap<>();
+        for (SubSub subSub : sub) {
+            subscription.put(subSub.getName(), new AtomicSubscription(
+                    subSub.getOp(),
+                    subSub.getVal()
+            ));
+        }
+        return subscription;
     }
 }

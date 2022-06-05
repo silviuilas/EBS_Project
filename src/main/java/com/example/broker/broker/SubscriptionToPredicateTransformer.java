@@ -12,18 +12,16 @@ public class SubscriptionToPredicateTransformer {
 
     public static Predicate<Publication> transform(Subscription subscription) {
         return publication -> {
-            for (AtomicSubscription atomicSubscription :
-                    subscription.getAtomicSubscriptions()) {
-                for (AtomicPublication atomicPublication :
-                        publication.getAtomicPublications()) {
-                    if (Objects.equals(atomicSubscription.getName(), atomicPublication.getName())) {
-                        if(atomicPublication.getVal() instanceof String && atomicSubscription.getVal() instanceof String)
-                            return compareString((String) atomicSubscription.getVal(), atomicSubscription.getOp(), (String) atomicPublication.getVal());
-                        else if(atomicPublication.getVal() instanceof Double && atomicSubscription.getVal() instanceof Double)
-                            return compareIntegers((Double) atomicPublication.getVal(), atomicSubscription.getOp(), (Double) atomicSubscription.getVal());
-                        else
-                            throw new RuntimeException("Unsupported comparison");
-                    }
+            for (AtomicPublication atomicPublication :
+                    publication.getAtomicPublications()) {
+                AtomicSubscription atomicSubscription = subscription.getAtomicSubscriptions().get(atomicPublication.getName());
+                if (atomicSubscription != null) {
+                    if (atomicPublication.getVal() instanceof String && atomicSubscription.getVal() instanceof String)
+                        return compareString((String) atomicSubscription.getVal(), atomicSubscription.getOp(), (String) atomicPublication.getVal());
+                    else if (atomicPublication.getVal() instanceof Double && atomicSubscription.getVal() instanceof Double)
+                        return compareIntegers((Double) atomicPublication.getVal(), atomicSubscription.getOp(), (Double) atomicSubscription.getVal());
+                    else
+                        throw new RuntimeException("Unsupported comparison");
                 }
             }
             return false;

@@ -1,12 +1,13 @@
 package com.example.broker.pubsub;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 public class Subscription {
     String routeKey;
-    List<AtomicSubscription> atomicSubscriptions = new ArrayList<>();
+    HashMap<String, AtomicSubscription> atomicSubscriptions = new HashMap<>();
 
     @Override
     public String toString() {
@@ -28,11 +29,11 @@ public class Subscription {
         this.routeKey = routeKey;
     }
 
-    public List<AtomicSubscription> getAtomicSubscriptions() {
+    public HashMap<String, AtomicSubscription> getAtomicSubscriptions() {
         return atomicSubscriptions;
     }
 
-    public void setAtomicSubscriptions(List<AtomicSubscription> atomicSubscriptions) {
+    public void setAtomicSubscriptions(HashMap<String, AtomicSubscription> atomicSubscriptions) {
         this.atomicSubscriptions = atomicSubscriptions;
     }
 

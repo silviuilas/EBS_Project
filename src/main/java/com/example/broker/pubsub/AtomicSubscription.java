@@ -1,13 +1,11 @@
 package com.example.broker.pubsub;
 
 public class AtomicSubscription {
-    String name;
     String op;
     Object val;
 
 
-    public AtomicSubscription(String name, String op, Object val) {
-        this.name = name;
+    public AtomicSubscription(String op, Object val) {
         this.op = op;
         this.val = val;
     }
@@ -15,18 +13,9 @@ public class AtomicSubscription {
     @Override
     public String toString() {
         return "AtomicSubscription{" +
-                "name='" + name + '\'' +
                 ", op='" + op + '\'' +
                 ", val=" + val +
                 '}';
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getOp() {

@@ -11,6 +11,7 @@ import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeoutException;
@@ -59,18 +60,16 @@ public class SubscriberRunnable implements Runnable {
 
     private List<Subscription> generateSubscriptions(String routeKey, int numberOfSubscriptionsToGenerate) {
         List<Subscription> subscriptions = new ArrayList<>();
-        List<List<AtomicSubscription>> generatedSubscriptions = subscriptionGenerator.getSubscriptions(numberOfSubscriptionsToGenerate);
-        for (List<AtomicSubscription> atomicSubscriptions : generatedSubscriptions) {
+        List<HashMap<String, AtomicSubscription>> generatedSubscriptions = subscriptionGenerator.getSubscriptions(numberOfSubscriptionsToGenerate);
+        for (HashMap<String, AtomicSubscription> atomicSubscriptions : generatedSubscriptions) {
             subscriptions.add(createSubscriptionWithRouteKey(routeKey, atomicSubscriptions));
         }
         return subscriptions;
     }
 
-    private Subscription createSubscriptionWithRouteKey(String routeKey, List<AtomicSubscription> atomicSubscriptions) {
+    private Subscription createSubscriptionWithRouteKey(String routeKey, HashMap<String, AtomicSubscription> atomicSubscriptions) {
         Subscription subscription = new Subscription(routeKey);
-        for (AtomicSubscription atomicSubscription : atomicSubscriptions) {
-            subscription.getAtomicSubscriptions().add(atomicSubscription);
-        }
+        subscription.setAtomicSubscriptions(atomicSubscriptions);
         return subscription;
     }
 }
