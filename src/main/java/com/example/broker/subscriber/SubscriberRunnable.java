@@ -1,5 +1,6 @@
 package com.example.broker.subscriber;
 
+import com.example.broker.helper.CustomLogger;
 import com.example.broker.helper.RandomString;
 import com.example.broker.pubsub.AtomicSubscription;
 import com.example.broker.pubsub.Subscription;
@@ -43,6 +44,7 @@ public class SubscriberRunnable implements Runnable {
                 SubscriberSender subscriberSender = new SubscriberSender(connection);
                 subscriberSender.subscribe(subscription, nr);
                 Thread.sleep(54);
+                CustomLogger.nrOfSubscriptionSent.addAndGet(1);
                 nr += 1;
             }
         } catch (IOException | TimeoutException | InterruptedException e) {

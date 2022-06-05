@@ -1,5 +1,6 @@
 package com.example.broker.broker;
 
+import com.example.broker.helper.CustomLogger;
 import com.example.broker.pubsub.Publication;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
@@ -48,6 +49,7 @@ public class PublisherBrokerListener {
             System.out.println(" [B] Broker Received '" + publication + "'");
 
             subscriptionManager.notifySubscribers(publication);
+            CustomLogger.nrOfPublicationReceived.addAndGet(1);
         };
     }
 

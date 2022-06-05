@@ -4,6 +4,9 @@ import com.example.broker.broker.BrokerRunnable;
 import com.example.broker.publisher.PublisherRunnabale;
 import com.example.broker.subscriber.SubscriberRunnable;
 
+import static com.example.broker.helper.CustomLogger.*;
+
+
 public class Application {
 
     public static final int NUMBER_OF_BROKERS = 2;
@@ -13,19 +16,35 @@ public class Application {
     public static void main(String[] argv) {
         System.out.println("Main thread is - " + Thread.currentThread().getName());
 
-        for(int i = 0; i< NUMBER_OF_BROKERS; i++){
+        long startTime = System.nanoTime();
+
+        for (int i = 0; i < NUMBER_OF_BROKERS; i++) {
             Thread thread = new Thread(new BrokerRunnable());
             thread.start();
         }
 
-        for(int i = 0; i< NUMBER_OF_SUBSCRIBERS; i++){
+        for (int i = 0; i < NUMBER_OF_SUBSCRIBERS; i++) {
             Thread thread = new Thread(new SubscriberRunnable());
             thread.start();
         }
 
-        for(int i = 0; i< NUMBER_OF_PUBLISHERS; i++){
+        for (int i = 0; i < NUMBER_OF_PUBLISHERS; i++) {
             Thread thread = new Thread(new PublisherRunnabale());
             thread.start();
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+                System.out.println("In shutdown hook");
+                System.out.println("Nr of nrOfSubscriptionSent " + nrOfSubscriptionSent);
+                System.out.println("Nr of nrOfSubscriptionReceived " + nrOfSubscriptionReceived);
+                System.out.println("Nr of nrOfPublicationSent " + nrOfPublicationSent);
+                System.out.println("Nr of nrOfPublicationReceived " + (nrOfPublicationReceived.intValue() / NUMBER_OF_BROKERS));
+                System.out.println("Nr of nrOfMatchesDone " + nrOfMatchesDone);
+                long endTime = System.nanoTime();
+                long duration = (endTime - startTime);
+                System.out.println("Took " + duration / 1000000 / 1000 + " seconds");
+            }
+        }, "Shutdown-thread"));
     }
 }

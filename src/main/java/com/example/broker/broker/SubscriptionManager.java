@@ -1,5 +1,6 @@
 package com.example.broker.broker;
 
+import com.example.broker.helper.CustomLogger;
 import com.example.broker.pubsub.Publication;
 import com.example.broker.pubsub.Subscription;
 import com.google.gson.Gson;
@@ -48,6 +49,7 @@ public class SubscriptionManager {
                 }
             }
         }
+        CustomLogger.nrOfMatchesDone.addAndGet(counter);
         System.out.println(" [B] Notifying " + counter + " subscribers");
     }
 

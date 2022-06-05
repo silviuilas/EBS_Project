@@ -1,5 +1,6 @@
 package com.example.broker.publisher;
 
+import com.example.broker.helper.CustomLogger;
 import com.example.broker.pubsub.AtomicPublication;
 import com.example.broker.pubsub.Publication;
 import com.google.gson.Gson;
@@ -42,6 +43,8 @@ public class PublisherRunnabale implements Runnable {
                 sendPublication(channel, publication, nr);
                 Thread.sleep(36);
                 nr += 1;
+                CustomLogger.nrOfPublicationSent.addAndGet(1);
+
             }
 
         } catch (IOException | TimeoutException | InterruptedException e) {
