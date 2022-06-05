@@ -12,7 +12,10 @@ import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeoutException;
 
 import static com.example.broker.helper.Constants.PUBLISHING_EXCHANGE_NAME;
@@ -40,11 +43,12 @@ public class PublisherRunnabale implements Runnable {
             List<Publication> publications = generatePublications(5000);
             int nr = 0;
             for (Publication publication : publications) {
+                CustomLogger.publisherSentTimeStampHashMap.put(publication.hashCode(), new Date());
+                CustomLogger.subscriberReceivedTimeStampHashMap.put(publication.hashCode(), new LinkedBlockingDeque<>());
                 sendPublication(channel, publication, nr);
                 Thread.sleep(36);
                 nr += 1;
                 CustomLogger.nrOfPublicationSent.addAndGet(1);
-
             }
 
         } catch (IOException | TimeoutException | InterruptedException e) {
@@ -55,7 +59,7 @@ public class PublisherRunnabale implements Runnable {
     private void sendPublication(Channel channel, Publication publication, int number) throws IOException {
         String message = gson.toJson(publication);
         channel.basicPublish(PUBLISHING_EXCHANGE_NAME, "", null, message.getBytes(StandardCharsets.UTF_8));
-        System.out.println(" [P] Publisher Sent '" + message + "'" + "number " + number);
+        System.out.println(" [P] Publisher Sent '" + publication + "'" + "number " + number + " " + publication.hashCode());
     }
 
     private List<Publication> generatePublications(int numberOfPublicationsToGenerate) {

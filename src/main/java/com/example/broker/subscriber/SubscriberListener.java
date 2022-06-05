@@ -1,6 +1,7 @@
 package com.example.broker.subscriber;
 
-import com.example.broker.pubsub.Subscription;
+import com.example.broker.helper.CustomLogger;
+import com.example.broker.pubsub.Publication;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -8,6 +9,7 @@ import com.rabbitmq.client.DeliverCallback;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.concurrent.TimeoutException;
 
 import static com.example.broker.helper.Constants.SUBSCRIBING_EXCHANGE_NAME;
@@ -41,8 +43,9 @@ public class SubscriberListener {
     public DeliverCallback getDeliverCallback() {
         return (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            Subscription subscription = gson.fromJson(message, Subscription.class);
-//            System.out.println(" [SL] Receiving notification on subscriber " + subscription.getRouteKey());
+            Publication publication = gson.fromJson(message, Publication.class);
+//            System.out.println(" [SL] Receiving notification on publication " + publication + " " + publication.hashCode());
+            CustomLogger.subscriberReceivedTimeStampHashMap.get(publication.hashCode()).add(new Date());
         };
     }
 }

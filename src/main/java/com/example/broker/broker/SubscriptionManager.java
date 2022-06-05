@@ -40,7 +40,7 @@ public class SubscriptionManager {
         for (Subscription subscription : this.subscription) {
             if (subscriptionPredicateMap.get(subscription) != null && subscriptionPredicateMap.get(subscription).test(publication)) {
                 try {
-                    notifySubscriber(subscription);
+                    notifySubscriber(subscription, publication);
                     counter += 1;
                 } catch (IOException | TimeoutException e) {
                     e.printStackTrace();
@@ -71,9 +71,9 @@ public class SubscriptionManager {
         return channel;
     }
 
-    public void notifySubscriber(Subscription subscription) throws IOException, TimeoutException {
+    public void notifySubscriber(Subscription subscription, Publication publication) throws IOException, TimeoutException {
         Channel channel = getChannel(subscription.getRouteKey());
-        channel.basicPublish(SUBSCRIBING_EXCHANGE_NAME, subscription.getRouteKey(), null, gson.toJson(subscription).getBytes(StandardCharsets.UTF_8));
+        channel.basicPublish(SUBSCRIBING_EXCHANGE_NAME, subscription.getRouteKey(), null, gson.toJson(publication).getBytes(StandardCharsets.UTF_8));
     }
 }
 

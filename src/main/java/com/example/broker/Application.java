@@ -4,6 +4,11 @@ import com.example.broker.broker.BrokerRunnable;
 import com.example.broker.publisher.PublisherRunnabale;
 import com.example.broker.subscriber.SubscriberRunnable;
 
+import java.math.BigInteger;
+import java.util.Date;
+import java.util.Queue;
+import java.util.concurrent.TimeUnit;
+
 import static com.example.broker.helper.CustomLogger.*;
 
 
@@ -43,8 +48,36 @@ public class Application {
                 System.out.println(" [Shutting Down] Nr of nrOfMatchesDone " + nrOfMatchesDone);
                 long endTime = System.nanoTime();
                 long duration = (endTime - startTime);
+                System.out.println(" [Shutting Down] Took " + getAverageLatency() + " milliseconds for a package to arrive");
                 System.out.println(" [Shutting Down] Took " + duration / 1000000 / 1000 + " seconds");
             }
         }, "Shutdown-thread"));
+    }
+
+    private static long getAverageLatency() {
+        long secondsSum = 0;
+        long counter = 0;
+        for (Integer hash :
+                subscriberReceivedTimeStampHashMap.keySet()) {
+            Queue<Date> queue = subscriberReceivedTimeStampHashMap.get(hash);
+            if (queue.size() > 0) {
+                Date averageTime = getAverageTimeOnQueue(queue);
+                long diff = averageTime.getTime() - publisherSentTimeStampHashMap.get(hash).getTime();//as given
+
+                long seconds = TimeUnit.MILLISECONDS.toMillis(diff);
+                secondsSum += seconds;
+                counter += 1;
+            }
+        }
+        return secondsSum / counter;
+    }
+
+    private static Date getAverageTimeOnQueue(Queue<Date> queue) {
+        BigInteger total = BigInteger.ZERO;
+        for (Date date : queue) {
+            total = total.add(BigInteger.valueOf(date.getTime()));
+        }
+        BigInteger averageMillis = total.divide(BigInteger.valueOf(queue.size()));
+        return new Date(averageMillis.longValue());
     }
 }
