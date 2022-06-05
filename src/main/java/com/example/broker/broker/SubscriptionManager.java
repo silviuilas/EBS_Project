@@ -10,10 +10,8 @@ import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
@@ -21,7 +19,7 @@ import static com.example.broker.helper.Constants.SUBSCRIBING_EXCHANGE_NAME;
 
 
 public class SubscriptionManager {
-    List<Subscription> subscription = new ArrayList<>();
+    Set<Subscription> subscription = ConcurrentHashMap.newKeySet();
     Map<Subscription, Predicate<Publication>> subscriptionPredicateMap = new HashMap<>();
     Map<String, Channel> subscriptionCachedChannels = new HashMap<>();
     ConnectionFactory factory;
@@ -39,7 +37,7 @@ public class SubscriptionManager {
 
     public void notifySubscribers(Publication publication) {
         int counter = 0;
-        for (Subscription subscription : new ArrayList<>(this.subscription)) {
+        for (Subscription subscription : this.subscription) {
             if (subscriptionPredicateMap.get(subscription) != null && subscriptionPredicateMap.get(subscription).test(publication)) {
                 try {
                     notifySubscriber(subscription);
@@ -69,13 +67,12 @@ public class SubscriptionManager {
             return getChannel(routeKey);
         }
         subscriptionCachedChannels.put(routeKey, channel);
+        channel.exchangeDeclare(SUBSCRIBING_EXCHANGE_NAME, "direct");
         return channel;
     }
 
     public void notifySubscriber(Subscription subscription) throws IOException, TimeoutException {
         Channel channel = getChannel(subscription.getRouteKey());
-        channel.exchangeDeclare(SUBSCRIBING_EXCHANGE_NAME, "direct");
-
         channel.basicPublish(SUBSCRIBING_EXCHANGE_NAME, subscription.getRouteKey(), null, gson.toJson(subscription).getBytes(StandardCharsets.UTF_8));
     }
 }

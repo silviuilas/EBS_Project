@@ -2,6 +2,7 @@ package com.example.broker.pubsub;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Subscription {
     String routeKey;
@@ -33,5 +34,18 @@ public class Subscription {
 
     public void setAtomicSubscriptions(List<AtomicSubscription> atomicSubscriptions) {
         this.atomicSubscriptions = atomicSubscriptions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Subscription that = (Subscription) o;
+        return Objects.equals(routeKey, that.routeKey) && Objects.equals(atomicSubscriptions, that.atomicSubscriptions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(routeKey, atomicSubscriptions);
     }
 }

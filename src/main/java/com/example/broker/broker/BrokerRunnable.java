@@ -25,9 +25,24 @@ public class BrokerRunnable implements Runnable {
             connection = factory.newConnection();
             subscriptionManager = new SubscriptionManager(factory);
             SubscriberBrokerListener subscriberBrokerListener = new SubscriberBrokerListener(connection, subscriptionManager);
-            subscriberBrokerListener.run();
+            Thread subscriberBrokerListenerThread = new Thread(() -> {
+                try {
+                    subscriberBrokerListener.run();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            subscriberBrokerListenerThread.start();
+
             PublisherBrokerListener publisherBrokerListener = new PublisherBrokerListener(connection, subscriptionManager);
-            publisherBrokerListener.run();
+            Thread publisherBrokerListenerThread = new Thread(() -> {
+                try {
+                    publisherBrokerListener.run();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            publisherBrokerListenerThread.start();
         } catch (IOException | TimeoutException e) {
             e.printStackTrace();
         }
