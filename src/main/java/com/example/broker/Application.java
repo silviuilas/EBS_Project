@@ -1,6 +1,7 @@
 package com.example.broker;
 
 import com.example.broker.broker.BrokerRunnable;
+import com.example.broker.helper.CustomPrintln;
 import com.example.broker.publisher.PublisherRunnabale;
 import com.example.broker.subscriber.SubscriberRunnable;
 
@@ -19,7 +20,7 @@ public class Application {
     public static final int NUMBER_OF_PUBLISHERS = 2;
 
     public static void main(String[] argv) {
-        System.out.println("Main thread is - " + Thread.currentThread().getName());
+        CustomPrintln.print("Main thread is - " + Thread.currentThread().getName());
 
         long startTime = System.nanoTime();
 
@@ -38,19 +39,17 @@ public class Application {
             thread.start();
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            public void run() {
-                System.out.println(" [Shutting Down] In shutdown hook");
-                System.out.println(" [Shutting Down] Nr of nrOfSubscriptionSent " + nrOfSubscriptionSent);
-                System.out.println(" [Shutting Down] Nr of nrOfSubscriptionReceived " + nrOfSubscriptionReceived);
-                System.out.println(" [Shutting Down] Nr of nrOfPublicationSent " + nrOfPublicationSent);
-                System.out.println(" [Shutting Down] Nr of nrOfPublicationReceived " + (nrOfPublicationReceived.intValue() / NUMBER_OF_BROKERS));
-                System.out.println(" [Shutting Down] Nr of nrOfMatchesDone " + nrOfMatchesDone);
-                long endTime = System.nanoTime();
-                long duration = (endTime - startTime);
-                System.out.println(" [Shutting Down] Took " + getAverageLatency() + " milliseconds for a package to arrive");
-                System.out.println(" [Shutting Down] Took " + duration / 1000000 / 1000 + " seconds");
-            }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println(" [Shutting Down] In shutdown hook");
+            System.out.println(" [Shutting Down] Nr of nrOfSubscriptionSent " + nrOfSubscriptionSent);
+            System.out.println(" [Shutting Down] Nr of nrOfSubscriptionReceived " + nrOfSubscriptionReceived);
+            System.out.println(" [Shutting Down] Nr of nrOfPublicationSent " + nrOfPublicationSent);
+            System.out.println(" [Shutting Down] Nr of nrOfPublicationReceived " + (nrOfPublicationReceived.intValue() / NUMBER_OF_BROKERS));
+            System.out.println(" [Shutting Down] Nr of nrOfMatchesDone " + nrOfMatchesDone);
+            long endTime = System.nanoTime();
+            long duration = (endTime - startTime);
+            System.out.println(" [Shutting Down] Took " + getAverageLatency() + " milliseconds for a package to arrive");
+            System.out.println(" [Shutting Down] Took " + duration / 1000000 / 1000 + " seconds");
         }, "Shutdown-thread"));
     }
 

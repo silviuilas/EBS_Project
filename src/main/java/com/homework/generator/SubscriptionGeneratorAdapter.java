@@ -33,13 +33,11 @@ public class SubscriptionGeneratorAdapter implements SubscriptionGenerator {
     private static Field getDrop() {
         Field value = new Field();
         value.setName("Drop");
-        value.setPond(0.2);
+        value.setPond(0.5);
         value.setRangeInf(0.0);
         value.setRangeSup(20.0);
         Map<String, Double> opPond = new HashMap<>();
-        opPond.put("=", 0.25);
-        opPond.put(">", 0.25);
-        opPond.put("<", 0.50);
+        opPond.put("=", 1.0);
 
         value.setOpPond(opPond);
         return value;
@@ -48,7 +46,7 @@ public class SubscriptionGeneratorAdapter implements SubscriptionGenerator {
     private static Field getVariation() {
         Field value = new Field();
         value.setName("Variation");
-        value.setPond(0.3);
+        value.setPond(0.1);
         value.setRangeInf(0.0);
         value.setRangeSup(1.0);
         Map<String, Double> opPond = new HashMap<>();
@@ -63,7 +61,7 @@ public class SubscriptionGeneratorAdapter implements SubscriptionGenerator {
     private static Field getCompany() {
         Field company = new Field();
         company.setName("Company");
-        company.setPond(0.5);
+        company.setPond(0.4);
         List<Object> companies = new ArrayList<>();
         companies.add("Google");
         companies.add("Facebook");

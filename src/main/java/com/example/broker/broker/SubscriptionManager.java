@@ -1,6 +1,7 @@
 package com.example.broker.broker;
 
 import com.example.broker.helper.CustomLogger;
+import com.example.broker.helper.CustomPrintln;
 import com.example.broker.pubsub.Publication;
 import com.example.broker.pubsub.Subscription;
 import com.google.gson.Gson;
@@ -10,7 +11,9 @@ import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
@@ -38,7 +41,7 @@ public class SubscriptionManager {
     public void notifySubscribers(Publication publication) {
         int counter = 0;
         for (Subscription subscription : this.subscription) {
-            if (subscriptionPredicateMap.get(subscription) != null && subscriptionPredicateMap.get(subscription).test(publication)) {
+            if (subscriptionPredicateMap.getOrDefault(subscription, (publication1) -> false).test(publication)) {
                 try {
                     notifySubscriber(subscription, publication);
                     counter += 1;
@@ -48,7 +51,7 @@ public class SubscriptionManager {
             }
         }
         CustomLogger.nrOfMatchesDone.addAndGet(counter);
-        System.out.println(" [B] Notifying " + counter + " subscribers");
+        CustomPrintln.print(" [B] Notifying " + counter + " subscribers");
     }
 
     Channel getChannel(String routeKey) throws IOException, TimeoutException {

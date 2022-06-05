@@ -1,6 +1,7 @@
 package com.example.broker.publisher;
 
 import com.example.broker.helper.CustomLogger;
+import com.example.broker.helper.CustomPrintln;
 import com.example.broker.pubsub.AtomicPublication;
 import com.example.broker.pubsub.Publication;
 import com.google.gson.Gson;
@@ -59,7 +60,7 @@ public class PublisherRunnabale implements Runnable {
     private void sendPublication(Channel channel, Publication publication, int number) throws IOException {
         String message = gson.toJson(publication);
         channel.basicPublish(PUBLISHING_EXCHANGE_NAME, "", null, message.getBytes(StandardCharsets.UTF_8));
-        System.out.println(" [P] Publisher Sent '" + publication + "'" + "number " + number + " " + publication.hashCode());
+        CustomPrintln.print(" [P] Publisher Sent '" + publication + "'" + "number " + number + " " + publication.hashCode());
     }
 
     private List<Publication> generatePublications(int numberOfPublicationsToGenerate) {

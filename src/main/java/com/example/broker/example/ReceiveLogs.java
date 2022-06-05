@@ -1,5 +1,6 @@
 package com.example.broker.example;
 
+import com.example.broker.helper.CustomPrintln;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -26,11 +27,11 @@ public class ReceiveLogs implements Runnable {
             String queueName = channel.queueDeclare().getQueue();
             channel.queueBind(queueName, EXCHANGE_NAME, "");
 
-            System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+            CustomPrintln.print(" [*] Waiting for messages. To exit press CTRL+C");
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                System.out.println(" [x] Received '" + message + "'");
+                CustomPrintln.print(" [x] Received '" + message + "'");
             };
             channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {
             });

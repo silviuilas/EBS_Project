@@ -26,11 +26,11 @@ public class Main {
         config.fields.add(variation);
         config.fields.add(date);
 
-/*        System.out.println(config.generatePub());*/
+/*        CustomPrintln.print(config.generatePub());*/
         FileWritingService.writePubsToFile(config.generatePub());
         FileWritingService.writeSubsToFile(config.generateSub());
 /*        for(List<SubSub> subSubs : config.generateSub())
-            System.out.println(subSubs);*/
+            CustomPrintln.print(subSubs);*/
     }
 
     private static Field getValue() {

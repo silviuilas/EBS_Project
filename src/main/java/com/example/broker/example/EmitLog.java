@@ -1,5 +1,6 @@
 package com.example.broker.example;
 
+import com.example.broker.helper.CustomPrintln;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -23,7 +24,7 @@ public class EmitLog implements Runnable {
             String message = "info: Hello World!";
 
             channel.basicPublish(EXCHANGE_NAME, "", null, message.getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + message + "'");
+            CustomPrintln.print(" [x] Sent '" + message + "'");
         } catch (IOException | TimeoutException e) {
             e.printStackTrace();
         }

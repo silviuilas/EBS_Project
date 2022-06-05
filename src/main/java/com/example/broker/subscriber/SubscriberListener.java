@@ -1,6 +1,7 @@
 package com.example.broker.subscriber;
 
 import com.example.broker.helper.CustomLogger;
+import com.example.broker.helper.CustomPrintln;
 import com.example.broker.pubsub.Publication;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
@@ -29,7 +30,7 @@ public class SubscriberListener {
             String queueName = channel.queueDeclare().getQueue();
             channel.queueBind(queueName, SUBSCRIBING_EXCHANGE_NAME, routeKey);
 
-            System.out.println(" [SL] Waiting for messages. To exit press CTRL+C");
+            CustomPrintln.print(" [SL] Waiting for messages. To exit press CTRL+C");
 
             DeliverCallback deliverCallback = getDeliverCallback();
             channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {
@@ -44,7 +45,7 @@ public class SubscriberListener {
         return (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             Publication publication = gson.fromJson(message, Publication.class);
-//            System.out.println(" [SL] Receiving notification on publication " + publication + " " + publication.hashCode());
+//            CustomPrintln.print(" [SL] Receiving notification on publication " + publication + " " + publication.hashCode());
             CustomLogger.subscriberReceivedTimeStampHashMap.get(publication.hashCode()).add(new Date());
         };
     }

@@ -1,5 +1,6 @@
 package com.example.broker.subscriber;
 
+import com.example.broker.helper.CustomPrintln;
 import com.example.broker.pubsub.Subscription;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
@@ -23,7 +24,7 @@ public class SubscriberSender {
         String message = gson.toJson(subscription);
 
         channel.basicPublish(SUBSCRIBING_EXCHANGE_NAME, SUBSCRIBING_ROUTE_KEY, null, message.getBytes(StandardCharsets.UTF_8));
-        System.out.println(" [SS] Subscription Sent '" + message + "' number " + nr);
+        CustomPrintln.print(" [SS] Subscription Sent '" + message + "' number " + nr);
 
         return subscription;
     }
