@@ -1,7 +1,7 @@
 package com.example.broker.publisher;
 
 import com.example.broker.pubsub.AtomicPublication;
-import com.example.broker.pubsub.Publishing;
+import com.example.broker.pubsub.Publication;
 import com.google.gson.Gson;
 import com.homework.generator.PublicationGeneratorAdapter;
 import com.rabbitmq.client.Channel;
@@ -22,8 +22,10 @@ public class PublisherRunnabale implements Runnable {
 
 
     public static void main(String[] args) {
-        Thread receiveLogsThread = new Thread(new PublisherRunnabale());
-        receiveLogsThread.start();
+        for(int i=0 ;i< 2;i++){
+            Thread thread = new Thread(new PublisherRunnabale());
+            thread.start();
+        }
     }
 
 
@@ -34,21 +36,25 @@ public class PublisherRunnabale implements Runnable {
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()) {
             channel.exchangeDeclare(PUBLISHING_EXCHANGE_NAME, "fanout");
-            List<Publishing> publications = generatePublications(10);
-            for(Publishing publishing : publications){
-                String message = gson.toJson(publishing);
-
-                channel.basicPublish(PUBLISHING_EXCHANGE_NAME, "", null, message.getBytes(StandardCharsets.UTF_8));
-                System.out.println(" [P] Publisher Sent '" + message + "'");
+            List<Publication> publications = generatePublications(5000);
+            for(Publication publication : publications){
+                sendPublication(channel, publication);
+                Thread.sleep(36);
             }
 
-        } catch (IOException | TimeoutException e) {
+        } catch (IOException | TimeoutException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    private List<Publishing> generatePublications(int numberOfPublicationsToGenerate) {
-        List<Publishing> publications = new ArrayList<>();
+    private void sendPublication(Channel channel, Publication publication) throws IOException {
+        String message = gson.toJson(publication);
+        channel.basicPublish(PUBLISHING_EXCHANGE_NAME, "", null, message.getBytes(StandardCharsets.UTF_8));
+        System.out.println(" [P] Publisher Sent '" + message + "'");
+    }
+
+    private List<Publication> generatePublications(int numberOfPublicationsToGenerate) {
+        List<Publication> publications = new ArrayList<>();
         List<List<AtomicPublication>> generatedPublications = publicationGenerator.getPublications(numberOfPublicationsToGenerate);
         for(List<AtomicPublication> atomicPublications : generatedPublications){
             publications.add(createPublication(atomicPublications));
@@ -56,8 +62,8 @@ public class PublisherRunnabale implements Runnable {
         return publications;
     }
 
-    private Publishing createPublication(List<AtomicPublication> atomicPublications) {
-        Publishing publication = new Publishing();
+    private Publication createPublication(List<AtomicPublication> atomicPublications) {
+        Publication publication = new Publication();
         for(AtomicPublication atomicPublication : atomicPublications) {
             publication.getAtomicPublications().add(atomicPublication);
         }

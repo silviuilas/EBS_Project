@@ -34,7 +34,10 @@ public class SubscriptionGeneratorAdapter implements SubscriptionGenerator {
         List<List<SubSub>> subs = config.generateSub();
         List<List<AtomicSubscription>> subscriptions = new ArrayList<>();
         for(List<SubSub> sub: subs){
-            if(sub.size() != 0){
+            if(sub.size() != 0) {
+                if(subscriptions.size() >= numberOfSubscriptions){
+                    break;
+                }
                 subscriptions.add(convertToAtomicSubscriptions(sub));
             }
         }
@@ -110,9 +113,7 @@ public class SubscriptionGeneratorAdapter implements SubscriptionGenerator {
         company.setVals(companies);
 
         Map<String, Double> opPond = new HashMap<>();
-        opPond.put("=", 0.5);
-        opPond.put("!=", 0.25);
-        opPond.put("<", 0.25);
+        opPond.put("=", 1.0);
         company.setOpPond(opPond);
         return company;
     }

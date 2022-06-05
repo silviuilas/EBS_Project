@@ -20,8 +20,10 @@ public class SubscriberRunnable implements Runnable {
     String name;
 
     public static void main(String[] args) {
-        Thread receiveLogsThread = new Thread(new SubscriberRunnable());
-        receiveLogsThread.start();
+        for (int i = 0; i < 3; i++) {
+            Thread thread = new Thread(new SubscriberRunnable());
+            thread.start();
+        }
     }
 
     @Override
@@ -35,12 +37,13 @@ public class SubscriberRunnable implements Runnable {
             SubscriberListener subscriberListener = new SubscriberListener(connection);
             subscriberListener.listenTo(name);
 
-            List<Subscription> subscriptions = generateSubscriptions(name, 10);
-            for(Subscription subscription: subscriptions){
+            List<Subscription> subscriptions = generateSubscriptions(name, 3334);
+            for (Subscription subscription : subscriptions) {
                 SubscriberSender subscriberSender = new SubscriberSender(connection);
                 subscriberSender.subscribe(subscription);
+                Thread.sleep(54);
             }
-        } catch (IOException | TimeoutException e) {
+        } catch (IOException | TimeoutException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -48,7 +51,7 @@ public class SubscriberRunnable implements Runnable {
     private List<Subscription> generateSubscriptions(String routeKey, int numberOfSubscriptionsToGenerate) {
         List<Subscription> subscriptions = new ArrayList<>();
         List<List<AtomicSubscription>> generatedSubscriptions = subscriptionGenerator.getSubscriptions(numberOfSubscriptionsToGenerate);
-        for(List<AtomicSubscription> atomicSubscriptions : generatedSubscriptions){
+        for (List<AtomicSubscription> atomicSubscriptions : generatedSubscriptions) {
             subscriptions.add(createSubscriptionWithRouteKey(routeKey, atomicSubscriptions));
         }
         return subscriptions;
@@ -56,7 +59,7 @@ public class SubscriberRunnable implements Runnable {
 
     private Subscription createSubscriptionWithRouteKey(String routeKey, List<AtomicSubscription> atomicSubscriptions) {
         Subscription subscription = new Subscription(routeKey);
-        for(AtomicSubscription atomicSubscription : atomicSubscriptions) {
+        for (AtomicSubscription atomicSubscription : atomicSubscriptions) {
             subscription.getAtomicSubscriptions().add(atomicSubscription);
         }
         return subscription;

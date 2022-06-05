@@ -1,6 +1,6 @@
 package com.example.broker.broker;
 
-import com.example.broker.pubsub.Publishing;
+import com.example.broker.pubsub.Publication;
 import com.example.broker.pubsub.Subscription;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
@@ -21,7 +21,7 @@ import static com.example.broker.helper.Constants.SUBSCRIBING_EXCHANGE_NAME;
 
 public class SubscriptionManager {
     List<Subscription> subscription = new ArrayList<>();
-    Map<Subscription, Predicate<Publishing>> subscriptionPredicateMap = new HashMap<>();
+    Map<Subscription, Predicate<Publication>> subscriptionPredicateMap = new HashMap<>();
     Gson gson = new Gson();
 
     public void addSubscription(Subscription subscription) {
@@ -29,9 +29,9 @@ public class SubscriptionManager {
         subscriptionPredicateMap.putIfAbsent(subscription, SubscriptionToPredicateTransformer.transform(subscription));
     }
 
-    public void notifySubscribers(Publishing publishing) {
-        for (Subscription subscription : this.subscription) {
-            if (subscriptionPredicateMap.get(subscription) != null && subscriptionPredicateMap.get(subscription).test(publishing)) {
+    public void notifySubscribers(Publication publication) {
+        for (Subscription subscription : new ArrayList<>(this.subscription)) {
+            if (subscriptionPredicateMap.get(subscription) != null && subscriptionPredicateMap.get(subscription).test(publication)) {
                 try {
                     notifySubscriber(subscription);
                 } catch (IOException | TimeoutException e) {

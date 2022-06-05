@@ -4,20 +4,28 @@ import com.example.broker.broker.BrokerRunnable;
 import com.example.broker.publisher.PublisherRunnabale;
 import com.example.broker.subscriber.SubscriberRunnable;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 public class Application {
+
+    public static final int NUMBER_OF_BROKERS = 2;
+    public static final int NUMBER_OF_SUBSCRIBERS = 3;
+    public static final int NUMBER_OF_PUBLISHERS = 2;
+
     public static void main(String[] argv) {
         System.out.println("Main thread is - " + Thread.currentThread().getName());
 
-        Thread receiveLogsThread = new Thread(new BrokerRunnable());
-        receiveLogsThread.start();
+        for(int i = 0; i< NUMBER_OF_BROKERS; i++){
+            Thread thread = new Thread(new BrokerRunnable());
+            thread.start();
+        }
 
-        ScheduledExecutorService receiverExecutor = Executors.newScheduledThreadPool(1);
+        for(int i = 0; i< NUMBER_OF_SUBSCRIBERS; i++){
+            Thread thread = new Thread(new SubscriberRunnable());
+            thread.start();
+        }
 
-        receiverExecutor.scheduleAtFixedRate(new SubscriberRunnable(), 0, 5, TimeUnit.SECONDS);
-        receiverExecutor.scheduleAtFixedRate(new PublisherRunnabale(), 0, 3, TimeUnit.SECONDS);
+        for(int i = 0; i< NUMBER_OF_PUBLISHERS; i++){
+            Thread thread = new Thread(new PublisherRunnabale());
+            thread.start();
+        }
     }
 }

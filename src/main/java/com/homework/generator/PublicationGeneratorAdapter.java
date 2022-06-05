@@ -24,7 +24,7 @@ public class PublicationGeneratorAdapter implements PublicationGenerator {
         Field variation = getVariation();
         Field date = getDate();
 
-        Config config = new Config(numberOfPublications, 0);
+        Config config = new Config(0, numberOfPublications);
 
         config.fields.add(company);
         config.fields.add(value);
@@ -108,9 +108,7 @@ public class PublicationGeneratorAdapter implements PublicationGenerator {
         company.setVals(companies);
 
         Map<String, Double> opPond = new HashMap<>();
-        opPond.put("=", 0.5);
-        opPond.put("!=", 0.25);
-        opPond.put("<", 0.25);
+        opPond.put("=", 1.0);
         company.setOpPond(opPond);
         return company;
     }

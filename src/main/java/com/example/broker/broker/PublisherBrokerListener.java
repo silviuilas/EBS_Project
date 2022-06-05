@@ -1,6 +1,6 @@
 package com.example.broker.broker;
 
-import com.example.broker.pubsub.Publishing;
+import com.example.broker.pubsub.Publication;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -43,11 +43,11 @@ public class PublisherBrokerListener {
     private DeliverCallback getPublisherDeliverCallback() {
         return (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            Publishing publishing = gson.fromJson(message, Publishing.class);
+            Publication publication = gson.fromJson(message, Publication.class);
 
-            System.out.println(" [B] Broker Received '" + publishing + "'");
+            System.out.println(" [B] Broker Received '" + publication + "'");
 
-            subscriptionManager.notifySubscribers(publishing);
+            subscriptionManager.notifySubscribers(publication);
         };
     }
 

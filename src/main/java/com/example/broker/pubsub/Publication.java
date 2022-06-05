@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Publishing implements Serializable {
+public class Publication implements Serializable {
     List<AtomicPublication> atomicPublications = new ArrayList<>();
 
     @Override
