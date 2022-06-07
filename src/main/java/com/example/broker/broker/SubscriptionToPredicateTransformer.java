@@ -5,6 +5,7 @@ import com.example.broker.pubsub.AtomicSubscription;
 import com.example.broker.pubsub.Publication;
 import com.example.broker.pubsub.Subscription;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -20,6 +21,8 @@ public class SubscriptionToPredicateTransformer {
                         return compareString((String) atomicSubscription.getVal(), atomicSubscription.getOp(), (String) atomicPublication.getVal());
                     else if (atomicPublication.getVal() instanceof Double && atomicSubscription.getVal() instanceof Double)
                         return compareIntegers((Double) atomicPublication.getVal(), atomicSubscription.getOp(), (Double) atomicSubscription.getVal());
+                    else if (atomicPublication.getVal() instanceof Date && atomicSubscription.getVal() instanceof Date)
+                        return compareDates((Date) atomicPublication.getVal(), atomicSubscription.getOp(), (Date) atomicSubscription.getVal());
                     else
                         throw new RuntimeException("Unsupported comparison");
                 }
@@ -43,6 +46,17 @@ public class SubscriptionToPredicateTransformer {
             case ">=" -> compare >= compareTo;
             case "<" -> compare < compareTo;
             case "<=" -> compare <= compareTo;
+            default -> throw new RuntimeException("Undefined operator for comparison between Integer and Integer");
+        };
+    }
+
+    private static boolean compareDates(Date compare, String op, Date compareTo) {
+        return switch (op) {
+            case "=" -> Objects.equals(compare, compareTo);
+            case ">" -> compare.before(compareTo);
+            case ">=" -> compare.before(compareTo) || compare.equals(compareTo);
+            case "<" -> compare.after(compareTo);
+            case "<=" -> compare.after(compareTo) || compare.equals(compareTo);
             default -> throw new RuntimeException("Undefined operator for comparison between Integer and Integer");
         };
     }

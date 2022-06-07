@@ -2,6 +2,7 @@ package com.example.broker.subscriber;
 
 import com.example.broker.helper.CustomLogger;
 import com.example.broker.helper.CustomPrintln;
+import com.example.broker.helper.GsonFactory;
 import com.example.broker.pubsub.Publication;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
@@ -17,7 +18,7 @@ import static com.example.broker.helper.Constants.SUBSCRIBING_EXCHANGE_NAME;
 
 public class SubscriberListener {
     Connection connection;
-    Gson gson = new Gson();
+    Gson gson = GsonFactory.get();
 
     public SubscriberListener(Connection connection) {
         this.connection = connection;

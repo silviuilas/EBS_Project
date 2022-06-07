@@ -2,6 +2,7 @@ package com.example.broker.publisher;
 
 import com.example.broker.helper.CustomLogger;
 import com.example.broker.helper.CustomPrintln;
+import com.example.broker.helper.GsonFactory;
 import com.example.broker.pubsub.AtomicPublication;
 import com.example.broker.pubsub.Publication;
 import com.google.gson.Gson;
@@ -22,7 +23,7 @@ import java.util.concurrent.TimeoutException;
 import static com.example.broker.helper.Constants.PUBLISHING_EXCHANGE_NAME;
 
 public class PublisherRunnabale implements Runnable {
-    Gson gson = new Gson();
+    Gson gson = GsonFactory.get();
     PublicationGenerator publicationGenerator = new PublicationGeneratorAdapter();
 
 

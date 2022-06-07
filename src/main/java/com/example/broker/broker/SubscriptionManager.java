@@ -2,6 +2,7 @@ package com.example.broker.broker;
 
 import com.example.broker.helper.CustomLogger;
 import com.example.broker.helper.CustomPrintln;
+import com.example.broker.helper.GsonFactory;
 import com.example.broker.pubsub.Publication;
 import com.example.broker.pubsub.Subscription;
 import com.google.gson.Gson;
@@ -27,7 +28,7 @@ public class SubscriptionManager {
     Map<String, Channel> subscriptionCachedChannels = new HashMap<>();
     ConnectionFactory factory;
     Connection connection;
-    Gson gson = new Gson();
+    Gson gson = GsonFactory.get();
 
     public SubscriptionManager(ConnectionFactory factory) {
         this.factory = factory;
@@ -51,6 +52,9 @@ public class SubscriptionManager {
             }
         }
         CustomLogger.nrOfMatchesDone.addAndGet(counter);
+        if (counter != 0) {
+            CustomLogger.matchesMade.add(Map.entry(this.subscription.size(), counter));
+        }
         CustomPrintln.print(" [B] Notifying " + counter + " subscribers");
     }
 

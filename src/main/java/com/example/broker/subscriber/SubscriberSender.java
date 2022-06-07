@@ -1,6 +1,7 @@
 package com.example.broker.subscriber;
 
 import com.example.broker.helper.CustomPrintln;
+import com.example.broker.helper.GsonFactory;
 import com.example.broker.pubsub.Subscription;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
@@ -14,7 +15,7 @@ import static com.example.broker.helper.Constants.SUBSCRIBING_ROUTE_KEY;
 
 public class SubscriberSender {
     Connection connection;
-    Gson gson = new Gson();
+    Gson gson = GsonFactory.get();
 
     public SubscriberSender(Connection connection) {
         this.connection = connection;

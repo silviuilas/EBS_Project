@@ -7,6 +7,7 @@ import com.example.broker.subscriber.SubscriberRunnable;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
@@ -46,6 +47,7 @@ public class Application {
             System.out.println(" [Shutting Down] Nr of nrOfPublicationSent " + nrOfPublicationSent);
             System.out.println(" [Shutting Down] Nr of nrOfPublicationReceived " + (nrOfPublicationReceived.intValue() / NUMBER_OF_BROKERS));
             System.out.println(" [Shutting Down] Nr of nrOfMatchesDone " + nrOfMatchesDone);
+            System.out.println(" [Shutting Down] Match rate percent is " + getMatchingRate() * 100 + "%");
             long endTime = System.nanoTime();
             long duration = (endTime - startTime);
             System.out.println(" [Shutting Down] Took " + getAverageLatency() + " milliseconds for a package to arrive");
@@ -78,5 +80,14 @@ public class Application {
         }
         BigInteger averageMillis = total.divide(BigInteger.valueOf(queue.size()));
         return new Date(averageMillis.longValue());
+    }
+
+    private static double getMatchingRate() {
+        double matchRateSum = 0.0;
+        for (Map.Entry<Integer, Integer> entry :
+                matchesMade) {
+            matchRateSum = matchRateSum + ((double) (entry.getValue()) / (double) entry.getKey());
+        }
+        return matchRateSum / matchesMade.size();
     }
 }
